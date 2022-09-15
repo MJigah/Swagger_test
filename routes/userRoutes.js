@@ -7,37 +7,6 @@ const asyncHandler = require('express-async-handler')
 
 /**
  * @swagger
- * components:
- *   schemas:
- *      User:
- *        type: object
- *        required: 
- *          - first_name
- *          - last_name
- *          - email
- *          - password
- *        properties:
- *          first_name: 
- *            type: String
- *            description: The First name of the user
- *          last_name: 
- *            type: String
- *            description: The Last name of the user
- *          email: 
- *            type: String
- *            description: The Email of the user
- *          password: 
- *            type: String
- *            description: The Password of the user
- *        example:
- *          first_name: Jane
- *          last_name: Doe
- *          email: janedoe1234@gmail.com
- *          password: 1234
- */
-
-/**
- * @swagger
  * '/api/user/register':
  *  post:
  *   summary: Create a new User
