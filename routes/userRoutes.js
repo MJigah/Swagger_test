@@ -7,6 +7,38 @@ const asyncHandler = require('express-async-handler')
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *      User:
+ *        type: object
+ *        required: 
+ *          - first_name
+ *          - last_name
+ *          - email
+ *          - password
+ *        properties:
+ *          first_name: 
+ *            type: String
+ *            description: The First name of the user
+ *          last_name: 
+ *            type: String
+ *            description: The Last name of the user
+ *          email: 
+ *            type: String
+ *            description: The Email of the user
+ *          password: 
+ *            type: String
+ *            description: The Password of the user
+ *        example:
+ *          firstname: Jane
+ *          lastname: Doe
+ *          email: janedoe1234@gmail.com
+ *          password: '1234'
+ *          phone_no: '+2349030980577'
+ */
+
+/**
+ * @swagger
  * '/api/user/register':
  *  post:
  *   summary: Create a new User
@@ -16,7 +48,7 @@ const asyncHandler = require('express-async-handler')
  *      content:
  *       application/json:
  *        schema: 
- *          $ref: '#/components/Schemas/User'
+ *          $ref: '#/components/schemas/User'
  *   responses:
  *     200:
  *      description: The User was registered Successfully
@@ -78,6 +110,30 @@ router.post('/register', asyncHandler(async(req, res) => {
     }
 
 }))
+
+/**
+ * @swagger
+ * '/api/user/login':
+ *  post:
+ *   summary: Authenticate existing User
+ *   tags: [User]
+ *   requestBody:
+ *      required: true
+ *      content:
+ *       application/json:
+ *        schema: 
+ *          $ref: '#/components/schemas/User'
+ *   responses:
+ *     200:
+ *      description: The User has logged in Successfully
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/User'
+ *     500:
+ *      description: Server Error 
+ * 
+ */
 
 //POST: Login a User
 router.post('/login', asyncHandler(async(req, res) => {
