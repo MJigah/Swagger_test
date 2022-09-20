@@ -130,6 +130,8 @@ router.post('/register', asyncHandler(async(req, res) => {
  *        application/json:
  *          schema:
  *            $ref: '#/components/schemas/User'
+ *     400:
+ *      description: Invalid Login Details
  *     500:
  *      description: Server Error 
  * 
@@ -160,6 +162,62 @@ router.post('/login', asyncHandler(async(req, res) => {
     } else {
         res.status(400)
         throw new Error('Invalid login details')
+    }
+}))
+
+
+/**
+ * @swagger
+ * '/api/user/{id}/changePassword':
+ *  put:
+ *   summary: Update User password
+ *   tags: [User]
+ *   parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *          required: true
+ *          description: The user id
+ *   requestBody:
+ *      required: true
+ *      content:
+ *       application/json:
+ *        schema: 
+ *          $ref: '#/components/schemas/User'
+ *   responses:
+ *     200:
+ *      description: Password updated Successfully
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/User'
+ *     400:
+ *      description: Invalid Details
+ *     500:
+ *      description: Server Error 
+ * 
+ */
+
+//PUT: Update details of existing user
+
+router.put('/:id/changePassword', asyncHandler(async(req, res) => {
+    const {old_password, new_password } = req.body
+    //Get user Details
+    const foundUser = await User.findById(req.params.id)
+    //Compare user details with former password
+    if(foundUser && (await bcrypt.compare(old_password, foundUser.password))){
+        //Generate salt for new password
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(new_password, salt)
+        //change password if true
+        const newUser = await User.findByIdAndUpdate(req.params.id, {password: hashedPassword})
+        
+        //return user details
+        res.send({...newUser, token: generateToken(newUser._id)})
+    } else {
+        res.status(400)
+        throw new Error('Invalid password')
     }
 }))
 
