@@ -36,6 +36,32 @@ const data = {
             count_in_stock: 10,
         }
     ],
+    orders: [
+        {
+            userId: '6329d01c7703617f421d1c68',
+            order_item: {
+                name: 'Fried Rice with Chicken',
+                quantity: 4,
+                image: './images/image.jpg',
+                price: 450.99,
+                meal: '632c62dd9b6ac77bfeae97bc'
+            },
+            order_date: '2022-09-22',
+            shipping_address: {
+                address: 'No 34A Gabon Crescent, Barnawa, Kaduna',
+                city: 'Kaduna',
+                postal_code: 800283
+            },
+            payment_method: 'Stripe',
+            payment_result: {
+                id: '123abc',
+                status: 'Successful',
+                update_time: '2022-09-20T14:42:13.746+00:00',
+                email_address: 'seedDB@gmail.com'
+            },
+            total_price: 18203.96,
+        }
+    ]
 }
 
 module.exports = data;

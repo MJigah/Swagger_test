@@ -243,7 +243,7 @@ router.put('/:id', asyncHandler(async(req, res) => {
  *          description: The Meal id
  *   responses:
  *     200:
- *      description: Meal updated Successfully
+ *      description: Meal deleted Successfully
  *      content:
  *        application/json:
  *          schema:
