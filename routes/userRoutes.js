@@ -221,6 +221,11 @@ router.put('/:id/changePassword', asyncHandler(async(req, res) => {
     }
 }))
 
+router.get('/:id', asyncHandler(async(req, res) => {
+    const user = await User.findById(req.params.id);
+    res.send(user);
+}))
+
 //Generate token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'abc123', {

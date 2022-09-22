@@ -6,6 +6,7 @@ const connectDB = require('./config/db')
 const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
 const userRouter = require('./routes/userRoutes')
+const mealRouter = require('./routes/mealRoutes')
 
 connectDB()
 
@@ -38,5 +39,6 @@ app.use(express.json())
 app.use(morgan('dev'))
 
 app.use('/api/user', userRouter)
+app.use('/api/meals', mealRouter)
 
 app.listen(PORT, () => console.log(`The Server is running on port ${PORT}`))
