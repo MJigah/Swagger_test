@@ -9,6 +9,7 @@ const mealRouter = require('./routes/mealRoutes')
 const orderRouter = require('./routes/orderRoutes')
 const reviewRouter = require('./routes/reviewRoutes')
 const userRouter = require('./routes/userRoutes')
+const vendorRouter = require('./routes/vendorRoutes')
 
 connectDB()
 
@@ -42,7 +43,8 @@ app.use(morgan('dev'))
 
 app.use('/api/meals', mealRouter)
 app.use('/api/order', orderRouter)
-app.use('/api/user', userRouter)
 app.use('/api/review', reviewRouter)
+app.use('/api/user', userRouter)
+app.use('/api/vendor', vendorRouter)
 
 app.listen(PORT, () => console.log(`The Server is running on port ${PORT}`))

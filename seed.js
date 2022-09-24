@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 const data = {
     meals: [
         {
@@ -76,6 +78,28 @@ const data = {
             userId: '6329d01c7703617f421d1c68',
             comments: 'This Store is terribly aweful',
             ratings: 0.5
+        }
+    ],
+    vendors: [
+        {
+            name: 'Mr Biggs',
+            address: 'Tsaunin Kura 800104, Kaduna',
+            location: {
+                lat: 10.453562073934537,
+                lon: 7.46469406110017,
+            },
+            manager: {
+                name: 'Mr Biggs Manager\'s Name',
+                password: '1234',
+            },
+            meals: [
+                '632c62dd9b6ac77bfeae97bc',
+                '632c62dd9b6ac77bfeae97bd'
+            ],
+            review: [
+                '632f438f0f284b7df3370154',
+                '632f438f0f284b7df3370155'
+            ]
         }
     ]
 }
