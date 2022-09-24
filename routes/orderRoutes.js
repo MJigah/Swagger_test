@@ -278,7 +278,7 @@ router.post('/', asyncHandler(async(req, res) => {
  */
 //PUT: update details of an order by id
 router.put('/:id', asyncHandler(async(req, res) => {
-    const newlyUpdatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body)
+    const newlyUpdatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, {new: true})
     if(!newlyUpdatedOrder){
         throw new Error('No Order found!')
     }

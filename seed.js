@@ -61,6 +61,22 @@ const data = {
             },
             total_price: 18203.96,
         }
+    ],
+    reviews: [
+        {
+            userId: '6329d01c7703617f421d1c68',
+            comments: 'This Store is one of the best in town, really awesome delivery time!!',
+            ratings: 4.5
+        },{
+            userId: '6329d01c7703617f421d1c68',
+            comments: 'This Store is sophisticated, but can do more',
+            ratings: 3
+        },
+        {
+            userId: '6329d01c7703617f421d1c68',
+            comments: 'This Store is terribly aweful',
+            ratings: 0.5
+        }
     ]
 }
 
