@@ -3,7 +3,9 @@ const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const Vendor = require("../model/vendor");
 const User = require("../model/user");
+const Review = require("../model/review");
 const mealDb = require("../seed");
+const bcrypt = require('bcryptjs')
 
 /**
  * @swagger
@@ -44,7 +46,7 @@ const mealDb = require("../seed");
  *          location: {lat: 10.47634278047149, lon: 7.421977446367563}
  *          manager: {name: 'Mr Biggs Manager', password: '12345'}
  *          meals: ['632c62dd9b6ac77bfeae97c0','632c62dd9b6ac77bfeae97bd']
- *          review: ['632f4698349a60426d5fe016', '632f438f0f284b7df3370155']
+ *          review: ['63346254b1b267ccaaa99b83', '63346252b1b267ccaaa99b81']
  */
 
 //GET: seed to db
@@ -75,7 +77,7 @@ router.get(
  *
  */
 
-//GET: find all reviewa
+//GET: find all reviews
 router.get(
   "/",
   asyncHandler(async (req, res) => {
@@ -89,10 +91,10 @@ router.get(
 
 /**
  * @swagger
- * '/api/review/aggregate/{id}':
+ * '/api/vendor/aggregate/{id}':
  *  get:
- *   summary: Find all reviews from a particular User
- *   tags: [Review]
+ *   summary: Get all reviews for a particular Vendor
+ *   tags: [Vendor]
  *   parameters:
  *      - in: path
  *        name: id
@@ -102,25 +104,26 @@ router.get(
  *          description: The User id
  *   responses:
  *     200:
- *      description: The Reviews are displayed Successfully
+ *      description: The Vendors are displayed Successfully
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Review'
+ *            $ref: '#/components/schemas/Vendor'
  *     500:
  *      description: Server Error
  *
  */
 
-//GET: find a review by preferences
+//GET: find a Vendor by preferences
 router.get(
   "/aggregate/:id",
   asyncHandler(async (req, res) => {
     const id = req.params.id;
-    const foundUser = await User.findById(id)
-    const foundReviews = await Review.aggregate([
-      { $match: { userId: foundUser._id } },
-    ]);
+    // const foundUser = await User.findById(id)
+    // const foundReviews = await Review.aggregate([
+    //   { $match: { userId: foundUser._id } },
+    // ]);
+    const foundReviews = await Vendor.findById(req.params.id).populate('review')
     if (!foundReviews) {
       throw new Error("No Orders Found!");
     }
@@ -130,151 +133,162 @@ router.get(
 
 /**
  * @swagger
- * '/api/review/{id}':
+ * '/api/vendor/{id}':
  *  get:
- *   summary: Get Review by Id
- *   tags: [Review]
+ *   summary: Get Vendor by Id
+ *   tags: [Vendor]
  *   parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: The Review id
+ *          description: The Vendor id
  *   responses:
  *     200:
- *      description: Review Displayed Successfully
+ *      description: Vendor Displayed Successfully
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Review'
+ *            $ref: '#/components/schemas/Vendor'
  *     400:
  *      description: Invalid Details
  *     404:
- *      description: The Review was not found
+ *      description: The Vendor was not found
  *     500:
  *      description: Server Error
  *
  */
 
-//GET: find a Review by id
+//GET: find a Vendor by id
 router.get(
   "/:id",
   asyncHandler(async (req, res) => {
-    const foundReview = await Review.findById(req.params.id);
-    if (!foundReview) {
-      throw new Error("No Review found!");
+    const foundVendor = await Vendor.findById(req.params.id);
+    if (!foundVendor) {
+      throw new Error("No Vendor found!");
     }
-    res.send(foundReview);
+    res.send(foundVendor);
   })
 );
 
 /**
  * @swagger
- * '/api/review':
+ * '/api/vendor':
  *  post:
- *   summary: Creating a new Review
- *   tags: [Review]
+ *   summary: Creating a new Vendor
+ *   tags: [Vendor]
  *   requestBody:
  *      required: true
  *      content:
  *       application/json:
  *        schema: 
- *          $ref: '#/components/schemas/Review'
+ *          $ref: '#/components/schemas/Vendor'
  *   responses:
  *     200:
- *      description: The Review is Created successfully
+ *      description: The Vendor is Created successfully
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Review'
+ *            $ref: '#/components/schemas/Vendor'
  *     400:
- *      description: Invalid Review Details
+ *      description: Invalid Vendor Details
  *     404:
- *      description: The Review was not found
+ *      description: The Vendor was not found
  *     500:
  *      description: Server Error 
  * 
  */
-//POST: register a review
+//POST: register a vendor
 router.post('/', asyncHandler(async(req, res) => {
-    const newReview = await Review.create(req.body);
-    res.send(newReview)
+    const password = req.body.manager.password;
+    //Generate hashed password
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+    req.body.manager.password = hashedPassword
+    const newRev = req.body.review.map((rev) => {
+      const foundRev = Review.findById(rev);
+      return foundRev._id
+    })
+    req.body.review = newRev;
+    console.log(req.body)
+    const newVendor = await Vendor.create(req.body);
+    res.send(newVendor)
 }))
 
 /**
  * @swagger
- * '/api/review/{id}':
+ * '/api/vendor/{id}':
  *  put:
- *   summary: Update Review details
- *   tags: [Review]
+ *   summary: Update Vendor details
+ *   tags: [Vendor]
  *   parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: The Review id
+ *          description: The Vendor id
  *   requestBody:
  *      required: true
  *      content:
  *       application/json:
  *        schema: 
- *          $ref: '#/components/schemas/Review'
+ *          $ref: '#/components/schemas/Vendor'
  *   responses:
  *     200:
- *      description: Review updated Successfully
+ *      description: Vendor updated Successfully
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Review'
+ *            $ref: '#/components/schemas/Vendor'
  *     400:
  *      description: Invalid Details
  *     404:
- *      description: The Review was not found
+ *      description: The Vendor was not found
  *     500:
  *      description: Server Error 
  * 
  */
-//PUT: update details of an review by id
+//PUT: update details of an vendor by id
 router.put('/:id', asyncHandler(async(req, res) => {
-    const newlyUpdatedReview = await Review.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    if(!newlyUpdatedReview){
-        throw new Error('No Review found!')
+    const newlyUpdatedVendor = await Vendor.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    if(!newlyUpdatedVendor){
+        throw new Error('No Vendor found!')
     }
-    res.send(newlyUpdatedReview)
+    res.send(newlyUpdatedVendor)
 }))
 
 /**
  * @swagger
- * '/api/review/{id}':
+ * '/api/vendor/{id}':
  *  delete:
- *   summary: Delete a particular Review
- *   tags: [Review]
+ *   summary: Delete a particular Vendor
+ *   tags: [Vendor]
  *   parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: The Review id
+ *          description: The Vendor id
  *   responses:
  *     200:
- *      description: Review deleted Successfully
+ *      description: Vendor deleted Successfully
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Review'
+ *            $ref: '#/components/schemas/Vendor'
  *     400:
  *      description: Invalid Details
  *     404:
- *      description: The Review was not found
+ *      description: The Vendor was not found
  *     500:
  *      description: Server Error 
  */
-//DELETE: delete a review
+//DELETE: delete a vendor
 router.delete('/:id', asyncHandler(async(req, res) => {
-    await Review.findByIdAndDelete(req.params.id)
+    await Vendor.findByIdAndDelete(req.params.id)
     res.sendStatus(200);
 }))
 

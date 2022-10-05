@@ -3,6 +3,8 @@ const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const Review = require("../model/review");
 const User = require("../model/user");
+const Vendor = require("../model/vendor");
+const { vendors } = require("../seed");
 const mealDb = require("../seed");
 
 /**
@@ -154,10 +156,17 @@ router.get(
 
 /**
  * @swagger
- * '/api/review':
+ * '/api/review/{id}':
  *  post:
- *   summary: Creating a new Review
+ *   summary: Creating a new Review for a Vendor
  *   tags: [Review]
+ *   parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *          required: true
+ *          description: The Vendor id
  *   requestBody:
  *      required: true
  *      content:
@@ -180,8 +189,11 @@ router.get(
  * 
  */
 //POST: register a review
-router.post('/', asyncHandler(async(req, res) => {
+router.post('/:id', asyncHandler(async(req, res) => {
+  const foundVendor = await Vendor.findById(req.params.id)
     const newReview = await Review.create(req.body);
+    foundVendor.review.push(newReview._id);
+    foundVendor.save();
     res.send(newReview)
 }))
 

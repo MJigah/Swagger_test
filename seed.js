@@ -91,15 +91,7 @@ const data = {
             manager: {
                 name: 'Mr Biggs Manager\'s Name',
                 password: '1234',
-            },
-            meals: [
-                '632c62dd9b6ac77bfeae97bc',
-                '632c62dd9b6ac77bfeae97bd'
-            ],
-            review: [
-                '632f438f0f284b7df3370154',
-                '632f438f0f284b7df3370155'
-            ]
+            }
         }
     ]
 }
