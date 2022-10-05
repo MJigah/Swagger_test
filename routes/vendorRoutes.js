@@ -45,8 +45,6 @@ const bcrypt = require('bcryptjs')
  *          phone_no: '0806 553 9385'
  *          location: {lat: 10.47634278047149, lon: 7.421977446367563}
  *          manager: {name: 'Mr Biggs Manager', password: '12345'}
- *          meals: ['632c62dd9b6ac77bfeae97c0','632c62dd9b6ac77bfeae97bd']
- *          review: ['63346254b1b267ccaaa99b83', '63346252b1b267ccaaa99b81']
  */
 
 //GET: seed to db
@@ -206,12 +204,6 @@ router.post('/', asyncHandler(async(req, res) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
     req.body.manager.password = hashedPassword
-    const newRev = req.body.review.map((rev) => {
-      const foundRev = Review.findById(rev);
-      return foundRev._id
-    })
-    req.body.review = newRev;
-    console.log(req.body)
     const newVendor = await Vendor.create(req.body);
     res.send(newVendor)
 }))

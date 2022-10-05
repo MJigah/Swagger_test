@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const Meal = require("../model/meal");
+const Vendor = require("../model/vendor");
 const mealDb = require("../seed");
 
 /**
@@ -154,10 +155,17 @@ router.get(
 
 /**
  * @swagger
- * '/api/meals':
+ * '/api/meals/{id}':
  *  post:
- *   summary: Registering a new Meal
+ *   summary: Registering a new Meal under a Vendor
  *   tags: [Meal]
+ *   parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *          required: true
+ *          description: The Vendor id
  *   requestBody:
  *      required: true
  *      content:
@@ -180,8 +188,11 @@ router.get(
  * 
  */
 //POST: register a meal
-router.post('/', asyncHandler(async(req, res) => {
+router.post('/:id', asyncHandler(async(req, res) => {
+  const foundVendor = await Vendor.findById(req.params.id);
     const newMeal = await Meal.create(req.body);
+    foundVendor.meals.push(newMeal._id);
+    foundVendor.save();
     res.send(newMeal)
 }))
 
