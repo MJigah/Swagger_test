@@ -5,6 +5,7 @@ const colors = require('colors')
 const connectDB = require('./config/db')
 const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
+const adminRouter = require('./routes/adminRoutes')
 const mealRouter = require('./routes/mealRoutes')
 const orderRouter = require('./routes/orderRoutes')
 const reviewRouter = require('./routes/reviewRoutes')
@@ -22,12 +23,22 @@ const options = {
             title: 'Food API',
             version: '1.0.0', 
             description: 'A simple express Food API'
-        }, 
+        },
         servers: [
             {
                 url: 'http://localhost:4000/'
             }
-        ]
+        ],
+        components: {
+            securitySchemes:
+            {
+                bearerAuth:{
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            }
+        },
     },
     apis: ["./routes/*.js"]
 }
@@ -41,10 +52,14 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
 
+app.use('/api/admin', adminRouter)
 app.use('/api/meals', mealRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/review', reviewRouter)
 app.use('/api/user', userRouter)
 app.use('/api/vendor', vendorRouter)
+
+
+// https://afrofoodhub.herokuapp.com/api-docs/
 
 app.listen(PORT, () => console.log(`The Server is running on port ${PORT}`))

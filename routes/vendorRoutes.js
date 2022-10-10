@@ -5,7 +5,8 @@ const Vendor = require("../model/vendor");
 const User = require("../model/user");
 const Review = require("../model/review");
 const mealDb = require("../seed");
-const bcrypt = require('bcryptjs')
+const bcrypt = require("bcryptjs");
+const { protectAdmin } = require("../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -40,7 +41,7 @@ const bcrypt = require('bcryptjs')
  *            type: Array
  *            description: The reviews of a particular vendor
  *        example:
- *          name: 'Mr Biggs' 
+ *          name: 'Mr Biggs'
  *          address: 'Kachia Road, opp. Queen Amina College, Kakuri 800282, Kaduna'
  *          phone_no: '0806 553 9385'
  *          location: {lat: 10.47634278047149, lon: 7.421977446367563}
@@ -121,7 +122,9 @@ router.get(
     // const foundReviews = await Review.aggregate([
     //   { $match: { userId: foundUser._id } },
     // ]);
-    const foundReviews = await Vendor.findById(req.params.id).populate('review')
+    const foundReviews = await Vendor.findById(req.params.id).populate(
+      "review"
+    );
     if (!foundReviews) {
       throw new Error("No Orders Found!");
     }
@@ -180,7 +183,7 @@ router.get(
  *      required: true
  *      content:
  *       application/json:
- *        schema: 
+ *        schema:
  *          $ref: '#/components/schemas/Vendor'
  *   responses:
  *     200:
@@ -194,19 +197,22 @@ router.get(
  *     404:
  *      description: The Vendor was not found
  *     500:
- *      description: Server Error 
- * 
+ *      description: Server Error
+ *
  */
 //POST: register a vendor
-router.post('/', asyncHandler(async(req, res) => {
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
     const password = req.body.manager.password;
     //Generate hashed password
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-    req.body.manager.password = hashedPassword
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    req.body.manager.password = hashedPassword;
     const newVendor = await Vendor.create(req.body);
-    res.send(newVendor)
-}))
+    res.send(newVendor);
+  })
+);
 
 /**
  * @swagger
@@ -225,8 +231,10 @@ router.post('/', asyncHandler(async(req, res) => {
  *      required: true
  *      content:
  *       application/json:
- *        schema: 
+ *        schema:
  *          $ref: '#/components/schemas/Vendor'
+ *   security:
+ *     - bearerAuth: []
  *   responses:
  *     200:
  *      description: Vendor updated Successfully
@@ -239,17 +247,25 @@ router.post('/', asyncHandler(async(req, res) => {
  *     404:
  *      description: The Vendor was not found
  *     500:
- *      description: Server Error 
- * 
+ *      description: Server Error
+ *
  */
 //PUT: update details of an vendor by id
-router.put('/:id', asyncHandler(async(req, res) => {
-    const newlyUpdatedVendor = await Vendor.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    if(!newlyUpdatedVendor){
-        throw new Error('No Vendor found!')
+router.put(
+  "/:id",
+  asyncHandler(async (req, res, next) => {
+    protectAdmin(req, res, next);
+    const newlyUpdatedVendor = await Vendor.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!newlyUpdatedVendor) {
+      throw new Error("No Vendor found!");
     }
-    res.send(newlyUpdatedVendor)
-}))
+    res.send(newlyUpdatedVendor);
+  })
+);
 
 /**
  * @swagger
@@ -276,12 +292,15 @@ router.put('/:id', asyncHandler(async(req, res) => {
  *     404:
  *      description: The Vendor was not found
  *     500:
- *      description: Server Error 
+ *      description: Server Error
  */
 //DELETE: delete a vendor
-router.delete('/:id', asyncHandler(async(req, res) => {
-    await Vendor.findByIdAndDelete(req.params.id)
+router.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    await Vendor.findByIdAndDelete(req.params.id);
     res.sendStatus(200);
-}))
+  })
+);
 
 module.exports = router;
