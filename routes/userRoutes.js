@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../model/user");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const { protect, protectAdmin } = require("../middleware/authMiddleware");
 const { getUserDetails, registerUser, loginUser, updateUserPassword, deleteUserAccount, updateUserDetails } = require("../controller/auth");
