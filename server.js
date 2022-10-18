@@ -5,28 +5,23 @@ const colors = require('colors')
 const connectDB = require('./config/db')
 const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
-const adminRouter = require('./routes/adminRoutes')
-const mealRouter = require('./routes/mealRoutes')
-const orderRouter = require('./routes/orderRoutes')
-const reviewRouter = require('./routes/reviewRoutes')
 const userRouter = require('./routes/userRoutes')
-const vendorRouter = require('./routes/vendorRoutes')
 
 connectDB()
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Food API',
+            title: 'Auth API',
             version: '1.0.0', 
-            description: 'A simple express Food API'
+            description: 'Simple User Authentication API'
         },
         servers: [
             {
-                url: 'http://localhost:4000/'
+                url: 'http://localhost:3000/'
             }
         ],
         components: {
@@ -52,12 +47,7 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
 
-app.use('/api/admin', adminRouter)
-app.use('/api/meals', mealRouter)
-app.use('/api/order', orderRouter)
-app.use('/api/review', reviewRouter)
 app.use('/api/user', userRouter)
-app.use('/api/vendor', vendorRouter)
 
 
 // https://afrofoodhub.herokuapp.com/api-docs/
